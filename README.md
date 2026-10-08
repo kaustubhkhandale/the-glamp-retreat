@@ -25,9 +25,11 @@ In project API settings, add the exact Studio origins needed for local and hoste
 Invite the client through project Members using a content editor role, not administrator unless required. Restrict management access to maintainers.
 Use Site settings, Home page and About page singleton entries; no duplicate singleton creation is offered. Create policies with slugs `privacy` and `booking-terms`. Add packages, amenities, gallery items and genuine approved reviews. Save drafts, then publish deliberately. Packages and amenities require active=true to be queried; reviews require approved=true.
 Publish only confirmed photos, addresses, contacts, prices, amenities and capacities. Guest Kitchen remains unconfirmed. Do not import historical spreadsheet values without confirmation. Production content is never automatically seeded.
-Telephone links use approved public contacts. WhatsApp renders only when configured. There are no reservation buttons, enquiry forms, payment, login or public uploads. Homepage modules render approved CMS content; testimonials must be approved to appear. Select Home page featured gallery references to populate the photo/video preview, and activate packages and amenities deliberately. Until verified content is published, neutral empty states replace the export's sample photos, location, numbers and reviews.
+Telephone links use approved public contacts. A floating WhatsApp chat button appears on every page when the Site settings WhatsApp number is configured. The Contact page enquiry form validates name, email, phone and message, then opens WhatsApp with the details ready to send; the visitor must press Send in WhatsApp. The form does not store enquiries or email them. There are no reservation buttons, payment, login or public uploads. Homepage modules render approved CMS content; testimonials must be approved to appear. Select Home page featured gallery references to populate the photo/video preview, and activate packages and amenities deliberately. Until verified content is published, neutral empty states replace the export's sample photos, location, numbers and reviews.
 
 ## Cache and publish webhook
+
+The owner supplied the public property address: The Glamp Retreat, 4MQM+GW2, Kondhali, Hardoli, Maharashtra 441103. It is the website fallback in `src/lib/location.ts`, shown with a lazy Google Maps embed and directions link on Home and Contact. Published Site settings address/directions override the fallback; no production CMS document was created. Review the map pin against the actual entrance before launch.
 
 Home page includes a **Hero background** switch: Image or Video. Existing content defaults to Image. For Video, upload a short compressed MP4 and keep a **Hero image / video fallback**; Studio requires both before publishing video mode. The background loops silently with a pause/play button. Reduced-motion visitors see the fallback image without downloading the video; failed playback also retains the image. Switching back to Image keeps the uploaded video for later use. Gallery videos remain manually played.
 
@@ -54,9 +56,69 @@ Metadata comes from Site settings with route titles and configurable canonical U
 Sanity images use hotspot-aware URLs, Next Image responsive sizes and project/dataset-scoped remote patterns. Video files load with preload=none and controls, with optional poster; external video URLs use links and do not embed/autoplay.
 Skip navigation, semantic landmarks, visible focus, responsive disclosure navigation and reduced-motion support are included. Real environment files, Studio dependencies/builds and credentials are ignored. Environment examples are intentionally tracked. Headers include nosniff, frame denial, referrer and restrictive camera/microphone/geolocation policies. Consider deployment-specific CSP/HSTS once final integrations and HTTPS domain are known.
 
-## Separate deployment
+## Vercel and Sanity deployment
 
-No deployment or paid resources were created. Deploy the root as a Node-compatible Next.js app with its environment values; build using npm ci and npm run build, start using npm start. Deploy Studio independently from studio/ using the authenticated Sanity CLI (`npx sanity login`, then `npm run deploy`) only when deployment is authorized. Configure the hosted Studio CORS origin and client membership before handoff.
+The website is hosted at https://the-glamp-retreat-prod.vercel.app. Vercel hosts the Next.js website; Sanity stores its content and hosts the separately deployed editing dashboard (Studio).
+
+### 1. Configure the Vercel website
+
+In Vercel, open the website project > Settings > Environment Variables and add these public configuration values for Production:
+
+| Variable | Value |
+| --- | --- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | `j70izg2a` |
+| `NEXT_PUBLIC_SANITY_DATASET` | `production` |
+| `SITE_URL` | `https://the-glamp-retreat-prod.vercel.app` |
+
+For signed publish webhooks, configure `SANITY_WEBHOOK_SECRET` privately in Vercel and use the same value in Sanity's webhook Secret field. No secret values belong in this README or Git. The current public dataset requires no API token for website reads.
+
+Redeploy the website after changing environment variables so the deployment uses the new values.
+
+### 2. Deploy the Sanity Studio
+
+Run these commands in PowerShell:
+
+```powershell
+cd D:\Projects\glamp\studio
+npm ci
+npx sanity login
+npm run deploy
+```
+
+Sign in with the account that has access to the existing project `j70izg2a`. When prompted for **Studio hostname (value.sanity.studio)**, enter only:
+
+```text
+glamp-retreat
+```
+
+Press Enter. If the name is available and deployment succeeds, the dashboard URL will be `https://glamp-retreat.sanity.studio`. If the hostname is taken, try `the-glamp-retreat`. Use the actual successful URL printed by the CLI; these suggested hostnames are not confirmed deployments.
+
+### 3. Configure Studio access
+
+Open [Sanity Manage](https://www.sanity.io/manage), select project `j70izg2a`, then API > CORS Origins. Ensure the actual deployed Studio origin is listed with **Allow credentials** enabled. For local Studio development, also add `http://localhost:3333` with credentials enabled. Server-side website reads do not require credentialed CORS for the Vercel website origin.
+
+Invite content editors through the project's Members settings if they need access to the dashboard.
+
+### 4. Connect publishing to the website
+
+In Sanity API > Webhooks, create an enabled webhook with:
+
+- URL: `https://the-glamp-retreat-prod.vercel.app/api/revalidate`
+- Method: POST
+- Dataset: `production`
+- Triggers: Create, Update and Delete
+- Drafts: Disabled
+- Secret: The same privately configured value as Vercel's `SANITY_WEBHOOK_SECRET`
+
+Copy the filter and projection from [Cache and publish webhook](#cache-and-publish-webhook) above. The website already includes the signed revalidation endpoint. With the webhook connected, published content changes refresh the website cache without a new Vercel deployment. Without it, the website uses its one-hour cache revalidation.
+
+### 5. Publish and verify content
+
+Open the deployed Studio and start with **Site settings**: property name, public telephone contacts, WhatsApp number including country code, and address. Publish homepage imagery, packages, amenities, gallery content and policy pages as needed. Packages and amenities must be active; testimonials must be approved. Saved drafts do not appear on the public website.
+
+Publish one approved change, confirm its webhook delivery succeeds, then refresh the Vercel website to verify it appears. Also check the WhatsApp chat button and Contact form after publishing the WhatsApp number.
+
+References: [Sanity Studio deployment](https://www.sanity.io/docs/studio/deployment), [Sanity CORS configuration](https://www.sanity.io/docs/content-lake/cors), [Signed webhook validation](https://www.sanity.io/docs/nextjs/validating-sanity-webhooks-nextjs).
 
 ## Verification and known limits
 

@@ -1,4 +1,28 @@
 ﻿@import "tailwindcss";
+.whatsapp-chat {
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 56px;
+  padding: 0.9rem 1.25rem;
+  border-radius: 999px;
+  background: #146c43;
+  color: white;
+  box-shadow: 0 6px 24px #05191230;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.whatsapp-chat:hover { background: #105737; }
+.whatsapp-chat .icon { width: 26px; height: 26px; }
+@media (max-width: 600px) {
+  .whatsapp-chat { padding: 0.85rem; }
+  .whatsapp-chat span { display: none; }
+}
 /* Export every token: interior.css consumes these variables separately. */
 @theme static {
   --color-primary: #051912;
@@ -448,6 +472,23 @@ address {
   background: #051912cc;
   color: #fff;
   font-size: 12px;
+}
+.location-map {
+  width: 100%;
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.location-map iframe {
+  display: block;
+  width: 100%;
+  height: clamp(260px, 30vw, 350px);
+  border: 0;
+  border-radius: var(--card-radius);
+  background: var(--color-surface-container-high);
+}
+.location-map .button {
+  justify-self: start;
 }
 .hero-content {
   position: relative;

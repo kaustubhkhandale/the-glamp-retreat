@@ -13,6 +13,18 @@ const { AmenitiesView } = require("../src/components/pages/amenities-view.tsx");
 const { ContactView } = require("../src/components/pages/contact-view.tsx");
 const { PolicyView } = require("../src/components/pages/policy-view.tsx");
 const { GalleryBrowser } = require("../src/components/gallery-browser.tsx");
+const { propertyLocation, PROPERTY_ADDRESS } = require("../src/lib/location.ts");
+const ownerLocation = propertyLocation();
+assert.equal(new URL(ownerLocation.mapUrl).searchParams.get("q"), PROPERTY_ADDRESS);
+assert.equal(new URL(ownerLocation.directionsUrl).searchParams.get("destination"), PROPERTY_ADDRESS);
+assert.ok(ownerLocation.mapUrl.includes("%2B"), "Plus Code must retain its plus sign in the URL");
+assert.equal(propertyLocation("UPDATED ADDRESS", "https://example.com/directions").directionsUrl, "https://example.com/directions");
+assert.equal(new URL(propertyLocation("UPDATED ADDRESS").mapUrl).searchParams.get("q"), "UPDATED ADDRESS");
+const locationHtml = render(ContactView, { settings: null });
+assert.ok(locationHtml.includes(PROPERTY_ADDRESS));
+assert.ok(locationHtml.includes('<iframe'));
+assert.ok(locationHtml.includes('loading="lazy"'));
+assert.ok(locationHtml.includes('title="Google Map showing The Glamp Retreat location"'));
 for (const [component, props] of [
   [AboutView, { data: null }],
   [PackagesView, { packages: [] }],

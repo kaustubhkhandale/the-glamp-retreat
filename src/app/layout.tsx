@@ -3,6 +3,7 @@ import "./globals.css";
 import "./interior.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { WhatsAppChat } from "@/components/whatsapp-chat";
 import { sanityFetch } from "@/lib/sanity/client";
 import { SETTINGS_QUERY } from "@/lib/sanity/queries";
 import type { SETTINGS_QUERY_RESULT } from "@/lib/sanity/types";
@@ -72,6 +73,7 @@ export default async function RootLayout({
           {children}
         </main>
         <Footer settings={settings} />
+        <WhatsAppChat phone={settings?.whatsapp} />
       </body>
     </html>
   );

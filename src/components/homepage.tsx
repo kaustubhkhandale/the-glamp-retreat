@@ -11,6 +11,8 @@ import { telephone } from "@/lib/sanity/content";
 import { imageUrl } from "@/lib/sanity/image";
 import { ContentImage } from "./content-image";
 import { HeroVideo } from "./hero-video";
+import { LocationMap } from "./location-map";
+import { propertyLocation } from "@/lib/location";
 import { SectionHeading } from "./section-heading";
 import { BookingContacts } from "./booking-contacts";
 import { Icon, type IconName } from "./icon";
@@ -482,28 +484,9 @@ export function Homepage({
                   Find the Retreat
                 </p>
                 <h3>{settings?.siteName || "The Glamp Retreat"}</h3>
-                {settings?.address ? (
-                  <address>{settings.address}</address>
-                ) : (
-                  <p className="muted">
-                    Property address will be available soon.
-                  </p>
-                )}
+                <address>{propertyLocation(settings?.address).address}</address>
               </div>
-              <div className="directions-panel">
-                <Icon name="pin" />
-                {settings?.directionsUrl ? (
-                  <a
-                    className="button button-light"
-                    href={settings.directionsUrl}
-                  >
-                    Get Directions
-                    <Icon name="arrow" />
-                  </a>
-                ) : (
-                  <span>Directions coming soon</span>
-                )}
-              </div>
+              <LocationMap address={settings?.address} directionsUrl={settings?.directionsUrl} />
             </div>
             <BookingContacts settings={settings} />
           </div>

@@ -3,6 +3,7 @@ import type { SVGProps } from "react";
 export type IconName =
   | "arrow"
   | "phone"
+  | "chat"
   | "pin"
   | "leaf"
   | "menu"
@@ -20,6 +21,12 @@ export type IconName =
   | "star"
   | "quote";
 const paths: Record<IconName, React.ReactNode> = {
+  chat: (
+    <>
+      <path d="M21 11.5a9 9 0 0 1-13.5 7.8L3 21l1.7-4.5A9 9 0 1 1 21 11.5Z" />
+      <path d="m8 7-1 2c1 4 3 6 7 7l2-1-2-2-1 1c-2-1-3-2-4-4l1-1-2-2Z" />
+    </>
+  ),
   arrow: (
     <>
       <path d="M4 12h16M14 6l6 6-6 6" />

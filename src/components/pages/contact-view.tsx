@@ -3,6 +3,9 @@ import type { SETTINGS_QUERY_RESULT } from "@/lib/sanity/types";
 import { PageHeader } from "../page-elements";
 import { BookingContacts } from "../booking-contacts";
 import { Icon } from "../icon";
+import { LocationMap } from "../location-map";
+import { propertyLocation } from "@/lib/location";
+import { ContactForm } from "../contact-form";
 export function ContactView({ settings }: { settings: SETTINGS_QUERY_RESULT }) {
   return (
     <>
@@ -10,40 +13,15 @@ export function ContactView({ settings }: { settings: SETTINGS_QUERY_RESULT }) {
         eyebrow="Let's Plan Your Visit"
         title="Contact the Retreat"
         crumb="Contact Us"
-        intro="For package information, visiting details, or group enquiries, contact The Glamp Retreat using the telephone contacts below."
+        intro="For package information, visiting details, or group enquiries, call our team or send an enquiry using the form below."
       />
       <section className="home-section">
         <div className="container contact-layout">
           <div className="contact-location">
             <p className="eyebrow">Find Us</p>
             <h2>{settings?.siteName || "The Glamp Retreat"}</h2>
-            {settings?.address ? (
-              <address>{settings.address}</address>
-            ) : (
-              <p className="muted">
-                Our property address will be available here soon.
-              </p>
-            )}
-            <div className="contact-map-panel">
-              <Icon name="pin" />
-              {settings?.directionsUrl ? (
-                <>
-                  <span>Directions to the Retreat</span>
-                  <a
-                    className="button button-light"
-                    href={settings.directionsUrl}
-                  >
-                    Open Directions
-                    <Icon name="arrow" />
-                  </a>
-                </>
-              ) : (
-                <>
-                  <span>Property Directions</span>
-                  <p>Map and directions will be available soon.</p>
-                </>
-              )}
-            </div>
+            <address>{propertyLocation(settings?.address).address}</address>
+            <LocationMap address={settings?.address} directionsUrl={settings?.directionsUrl} />
           </div>
           <div>
             <p className="eyebrow">Get in Touch</p>
@@ -53,6 +31,11 @@ export function ContactView({ settings }: { settings: SETTINGS_QUERY_RESULT }) {
         </div>
       </section>
       <section className="home-section section-soft">
+        <div className="container">
+          <ContactForm phone={settings?.whatsapp} />
+        </div>
+      </section>
+      <section className="home-section">
         <div className="container contact-bottom-grid">
           <div>
             <p className="eyebrow">Stay Connected</p>

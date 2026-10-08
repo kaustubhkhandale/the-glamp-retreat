@@ -145,6 +145,16 @@ const fixture = {
   ],
 };
 const populatedHtml = render(fixture);
+const unresolvedReferencesHtml = render({
+  ...fixture,
+  home: {
+    ...fixture.home,
+    featuredPackages: [null, { _id: "test-package" }, null],
+    featuredGallery: [null, ...fixture.home.featuredGallery, null],
+  },
+});
+assert.ok(unresolvedReferencesHtml.includes("TEST PACKAGE"), "Unresolved package references must not prevent rendering published packages");
+assert.ok(unresolvedReferencesHtml.includes("Test film"), "Unresolved gallery references must not prevent rendering published media");
 for (const value of [
   "TEST FIXTURE HEADING",
   "TEST PACKAGE",

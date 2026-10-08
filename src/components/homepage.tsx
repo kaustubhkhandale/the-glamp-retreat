@@ -48,7 +48,8 @@ export function Homepage({
       item.category === "Day Picnic" || item.category === "Evening Leisure",
   );
   const nightPackage = packages.find((item) => item.category === "Overnight");
-  const featuredIds = home?.featuredPackages?.map((item) => item._id) || [];
+  const featuredIds =
+    home?.featuredPackages?.filter((item) => item != null).map((item) => item._id) || [];
   const preferredPackages = [
     ...packages.filter((item) => featuredIds.includes(item._id)),
     ...packages.filter((item) => !featuredIds.includes(item._id)),
